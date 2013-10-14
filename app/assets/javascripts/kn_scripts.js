@@ -6,9 +6,19 @@ var tracks = [114736768, 114912487, 115023431, 114782237];
 
 window.onload = function() {
 
+  $.ajax({
+    url: '/show',
+    dataType: 'json'
+  })
+  .done(function(data) {
+    console.log(data);
+  })
+  
+  
+
   // play some songs in the bg
   SC.initialize({
-    client_id: '560d601638096e37de666da699486214',
+    client_id: '560d601638096e37de666da699486214'
   });
 
 
