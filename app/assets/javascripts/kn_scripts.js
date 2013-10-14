@@ -11,6 +11,8 @@ window.onload = function() {
     client_id: '560d601638096e37de666da699486214',
   });
 
+
+
   SC.stream("/tracks/" + tracks[0], {
     volume: 0,
     position: 5000
@@ -307,10 +309,11 @@ function getDistanceFrom(target) {
   var distance = Math.sqrt( Math.pow((pos.x - targ_pos.x), 2) + Math.pow((pos.y - targ_pos.y), 2)  );
   
   if (distance > 225) {
-    
-    return false
+    // will eventually return false so we don't redraw canvas each
+    return distance
   
   } else {
+    console.log("inside!")
     
     return distance;
 
