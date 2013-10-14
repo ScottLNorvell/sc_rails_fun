@@ -305,7 +305,16 @@ function getDistanceFrom(target) {
   var pos = circle.getAbsolutePosition();
   var targ_pos = target.getAbsolutePosition();
   var distance = Math.sqrt( Math.pow((pos.x - targ_pos.x), 2) + Math.pow((pos.y - targ_pos.y), 2)  );
-  return distance;
+  
+  if (distance > 225) {
+    
+    return false
+  
+  } else {
+    
+    return distance;
+
+  }
 }
 
 
