@@ -67,8 +67,8 @@ window.onload = function() {
 
   // make circle
   circle = new Kinetic.Circle({
-    x: scr_width / 2,
-    y: scr_height / 2,
+    x: 350,//scr_width / 2,
+    y: 100,//scr_height / 2,
     radius: 20,
     fill: 'red',
     stroke: 'black',
@@ -287,10 +287,12 @@ function checkCirclePosition() {
       text.setText('I touched the circle there!');
       targSong.setVolume(100);
     } else if (distance <= 200) {
-      volume = 100 * 200/(distance * 10)
+      var volume_linear = -5/8 * distance + 125;
+      var volume_parabolic = Math.pow((distance - 200),2) / 256;
+      volume = volume_parabolic;
       targObj.setOpacity(30/distance);
       targSong.setVolume(volume);
-      text.setText('Circle Position = {x: ' + pos.x + ', y: ' + pos.y + "} Distance = " + Math.round(distance) + " Volume = " + volume);
+      text.setText('Circle Position = {x: ' + pos.x + ', y: ' + pos.y + "} Distance = " + Math.round(distance) + " Volume = " + Math.round(volume));
     } else {
       targObj.setOpacity(0.1);
       targSong.setVolume(0);
