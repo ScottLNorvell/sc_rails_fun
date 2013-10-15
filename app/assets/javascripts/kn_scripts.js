@@ -14,7 +14,7 @@ var tracks = [114736768, 114912487, 115023431, 114782237];
 
 var test_tracks;
 
-var genre = prompt('genre please');
+var genre = 'folk'; //prompt('genre please');
 
 window.onload = function() {
 
@@ -58,8 +58,8 @@ function loadSounds(track_data) {
 }
 
 function drawGame(track_data) {
-  var scr_width = window.screen.width
-  var scr_height = window.screen.height
+  var scr_width = window.innerWidth;
+  var scr_height = window.innerHeight;
 
   // make stage
   var stage = new Kinetic.Stage({
