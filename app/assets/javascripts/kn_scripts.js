@@ -1,68 +1,63 @@
-var target_objects, circle, layer, text;
+var target_objects = [], avatar, layer, text;
 
 var songs = {};
 
+var circ_points = [
+ { x: 100, y: 100, color: "yellow" },
+ { x: 650, y: 100, color: "blue" },
+ { x: 1050, y: 300, color: "green" },
+ { x: 100, y: 100, color: "purple" },
+ { x: 1050, y: 500, color: "orange" }
+]
+
 var tracks = [114736768, 114912487, 115023431, 114782237];
+
+var test_tracks;
+
+var genre = prompt('genre please');
 
 window.onload = function() {
 
   $.ajax({
     url: '/show',
-    dataType: 'json'
+    dataType: 'json',
+    data: { genre: genre }
   })
   .done(function(data) {
-    console.log(data);
+    // load all the audio
+    test_tracks = data;
+    loadSounds(data);
   })
-  
-  
+}
 
+function loadSounds(track_data) {
   // play some songs in the bg
   SC.initialize({
     client_id: '560d601638096e37de666da699486214'
   });
 
+  $.each(track_data, function(i, track) {
+    var id = track.id;
+    var title = track.title;
 
+    SC.stream("/tracks/" + id, {
+      volume: 0,
+      position: 5000
+    }, function(sound) {
+        console.log(title);
+        songs[title] = sound;
+        sound.play()
+    });
 
-  SC.stream("/tracks/" + tracks[0], {
-    volume: 0,
-    position: 5000
-  }, function(sound) {
-      songs.a = sound;
-      sound.play()
   });
 
-  SC.stream("/tracks/" + tracks[1], {
-    volume: 0,
-    position: 5000
-  }, function(sound) {
-      songs.b = sound;
-      sound.play()
+  SC.whenStreamingReady(function(track_data) { 
+    drawGame(track_data); 
+    console.log('songs loaded');
   });
+}
 
-  SC.stream("/tracks/" + tracks[2], {
-    volume: 0,
-    position: 5000
-  }, function(sound) {
-      songs.c = sound;
-      sound.play()
-  });
-
-  SC.stream("/tracks/" + tracks[3], {
-    volume: 0,
-    position: 5000
-  }, function(sound) {
-      songs.d = sound;
-      sound.play()
-  });
-
-  // SC.stream("/tracks/" + tracks[4], {
-  //   volume: 0,
-  //   position: 5000
-  // }, function(sound) {
-  //     songs.e = sound;
-  //     sound.play()
-  // });
-
+function drawGame(track_data) {
   var scr_width = window.screen.width
   var scr_height = window.screen.height
 
@@ -73,12 +68,13 @@ window.onload = function() {
     height: scr_height
   });
 
+  var avatar_layer = new Kinetic.Layer();
+
   // make layer
   layer = new Kinetic.Layer();
-  var play_layer = new Kinetic.Layer();
 
-  // make circle
-  circle = new Kinetic.Circle({
+  // make avatar
+  avatar = new Kinetic.Circle({
     x: 350,//scr_width / 2,
     y: 100,//scr_height / 2,
     radius: 20,
@@ -87,50 +83,68 @@ window.onload = function() {
     strokeWidth: 4
   });
 
-  var targetCircle = new Kinetic.Circle({
-    x: 100,
-    y: 100,
-    radius: 20,
-    fill: 'blue',
-    stroke: 'black',
-    opacity: 0.1,
-    strokeWidth: 4,
-    name: 'a'
+  console.log("track_data = ", test_tracks)
+
+  $.each(test_tracks, function(i, track) {
+    var pt = circ_points[i];
+    var circle = new Kinetic.Circle({
+      x: pt.x,
+      y: pt.y,
+      radius: 20,
+      fill: pt.color,
+      stroke: 'black',
+      opacity: 0.1,
+      strokeWidth: 4,
+      name: track.title
+    });
+    target_objects.push(circle);
+    layer.add(circle);
   });
 
-  var targetCircle2 = new Kinetic.Circle({
-    x: scr_width - 100,
-    y: 100,
-    radius: 20,
-    fill: 'green',
-    stroke: 'black',
-    opacity: 0.1,
-    strokeWidth: 4,
-    name: 'b'
-  });
+  // var targetCircle = new Kinetic.Circle({
+  //   x: 100,
+  //   y: 100,
+  //   radius: 20,
+  //   fill: 'blue',
+  //   stroke: 'black',
+  //   opacity: 0.1,
+  //   strokeWidth: 4,
+  //   name: 'a'
+  // });
 
-  var targetCircle3 = new Kinetic.Circle({
-    x: scr_width - 300,
-    y: 500,
-    radius: 20,
-    fill: 'purple',
-    stroke: 'black',
-    opacity: 0.1,
-    strokeWidth: 4,
-    name: 'c'
-  });
+  // var targetCircle2 = new Kinetic.Circle({
+  //   x: 650,
+  //   y: 100,
+  //   radius: 20,
+  //   fill: 'green',
+  //   stroke: 'black',
+  //   opacity: 0.1,
+  //   strokeWidth: 4,
+  //   name: 'b'
+  // });
 
-  var targetCircle4 = new Kinetic.Circle({
-    x: 300,
-    y: 500,
-    radius: 20,
-    fill: 'yellow',
-    stroke: 'black',
-    opacity: 0.1,
-    strokeWidth: 4,
-    name: 'd'
+  // var targetCircle3 = new Kinetic.Circle({
+  //   x: 1050,
+  //   y: 100,
+  //   radius: 20,
+  //   fill: 'purple',
+  //   stroke: 'black',
+  //   opacity: 0.1,
+  //   strokeWidth: 4,
+  //   name: 'c'
+  // });
 
-  });
+  // var targetCircle4 = new Kinetic.Circle({
+  //   x: 300,
+  //   y: 500,
+  //   radius: 20,
+  //   fill: 'yellow',
+  //   stroke: 'black',
+  //   opacity: 0.1,
+  //   strokeWidth: 4,
+  //   name: 'd'
+
+  // });
 
   // array of target circle points (eventually returned from function that makes circles)
   // var target_points = [ {x: 100, y: 100}, {x:500, y:300} ]
@@ -147,15 +161,16 @@ window.onload = function() {
 
   // add circle and text to layer
   layer.add(text);
-  play_layer.add(circle);
-  layer.add(targetCircle);
-  layer.add(targetCircle2);
-  layer.add(targetCircle3);
-  layer.add(targetCircle4);
+  // layer.add(targetCircle);
+  // layer.add(targetCircle2);
+  // layer.add(targetCircle3);
+  // layer.add(targetCircle4);
+
+  avatar_layer.add(avatar);
 
   // add the layer to the stage
   stage.add(layer);
-  stage.add(play_layer);
+  stage.add(avatar_layer);
 
 
   // ======== Key Events! ========
@@ -251,43 +266,43 @@ window.onload = function() {
 
   var moveUp = new Kinetic.Animation(function(frame) {
 
-    var currY = circle.getY();
-    circle.setY(currY - velocity)
+    var currY = avatar.getY();
+    avatar.setY(currY - velocity)
     checkCirclePosition();
 
-  }, play_layer);
+  }, avatar_layer);
 
   var moveDown = new Kinetic.Animation(function(frame) {
 
-    var currY = circle.getY();
-    circle.setY(currY + velocity)
+    var currY = avatar.getY();
+    avatar.setY(currY + velocity)
     checkCirclePosition();
 
-  }, play_layer);
+  }, avatar_layer);
 
   var moveLeft = new Kinetic.Animation(function(frame) {
 
-    var currX = circle.getX();
-    circle.setX(currX - velocity)
+    var currX = avatar.getX();
+    avatar.setX(currX - velocity)
     checkCirclePosition();
 
-  }, play_layer);
+  }, avatar_layer);
 
   var moveRight = new Kinetic.Animation(function(frame) {
 
-    var currX = circle.getX();
-    circle.setX(currX + velocity)
+    var currX = avatar.getX();
+    avatar.setX(currX + velocity)
     checkCirclePosition();
 
-  }, play_layer);
+  }, avatar_layer);
 
-  target_objects = [targetCircle, targetCircle2, targetCircle3, targetCircle4]
+  // target_objects = [targetCircle, targetCircle2, targetCircle3, targetCircle4]
 }
 
 // function for circle interactions
 function checkCirclePosition() {
   var distance, volume;
-  var pos = circle.getAbsolutePosition();
+  var pos = avatar.getAbsolutePosition();
   
 
   for (i in target_objects) {
@@ -314,7 +329,7 @@ function checkCirclePosition() {
 }
 
 function getDistanceFrom(target) {
-  var pos = circle.getAbsolutePosition();
+  var pos = avatar.getAbsolutePosition();
   var targ_pos = target.getAbsolutePosition();
   var distance = Math.sqrt( Math.pow((pos.x - targ_pos.x), 2) + Math.pow((pos.y - targ_pos.y), 2)  );
   
